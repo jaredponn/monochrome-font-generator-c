@@ -21,7 +21,8 @@ int main(int argc, char *argv[]) {
     goto out;
   }
 
-  fprintf(stderr, "Processing: %s\n", args.input_ttf);
+  fprintf(stderr, "Processing: %s (%dx%d @ %dx%d dpi)\n", args.input_ttf,
+          args.width, args.height, args.hdpi, args.vdpi);
 
   /////////////////////////
   // Start the FreeType library
@@ -50,8 +51,22 @@ int main(int argc, char *argv[]) {
   }
 
   /////////////////////////
-  // Create the glyphs
+  // Configure the face
   /////////////////////////
+  ft_error = FT_Set_Char_Size(face,       /* handle to face object         */
+                              arg.width,  /* char_width in 1/64 of points  */
+                              arg.height, /* char_height in 1/64 of points */
+                              arg.hdpi,   /* horizontal device resolution  */
+                              arg.vdpi);  /* vertical device resolution    */
+
+  if (ft_error != FT_Err_Ok) {
+    fprintf(stderr, "Failed to set char size for %s with ft_error=%s\n",
+            args.input_ttf,
+            FT_Error_String(ft_error) == NULL ? "<unknown error>"
+                                              : FT_Error_String(ft_error));
+    status = 1;
+    goto ft_done_freetype;
+  }
 
 ft_done_face:
   FT_Done_Face(ft_face);
