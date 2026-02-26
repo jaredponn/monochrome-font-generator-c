@@ -1,5 +1,10 @@
+/**
+ * @brief Most of this is a code generator to comply with the method described
+ * in <https://freetype.org/freetype2/docs/tutorial/step1.html>
+ */
 #include "cli.h"
 
+#include <stdint.h>
 #include <stdio.h>
 
 #include <ft2build.h>
@@ -53,11 +58,11 @@ int main(int argc, char *argv[]) {
   /////////////////////////
   // Configure the face
   /////////////////////////
-  ft_error = FT_Set_Char_Size(face,       /* handle to face object         */
-                              arg.width,  /* char_width in 1/64 of points  */
-                              arg.height, /* char_height in 1/64 of points */
-                              arg.hdpi,   /* horizontal device resolution  */
-                              arg.vdpi);  /* vertical device resolution    */
+  ft_error = FT_Set_Char_Size(ft_face,     /* handle to face object         */
+                              args.width,  /* char_width in 1/64 of points  */
+                              args.height, /* char_height in 1/64 of points */
+                              args.hdpi,   /* horizontal device resolution  */
+                              args.vdpi);  /* vertical device resolution    */
 
   if (ft_error != FT_Err_Ok) {
     fprintf(stderr, "Failed to set char size for %s with ft_error=%s\n",
@@ -68,6 +73,30 @@ int main(int argc, char *argv[]) {
     goto ft_done_freetype;
   }
 
+  /////////////////////////
+  // Creating the header
+  /////////////////////////
+
+  /////////////////////////
+  // Creating the mapping
+  /////////////////////////
+  printf("#ifndef TTF_TO_BW_H\n");
+  printf("#define TTF_TO_BW_H\n");
+  for (uint8_t i = 0; i < UINT8_MAX; ++i) {
+    ft_error = FT_Load_Char(face, i, FT_LOAD_RENDER | FT_LOAD_MONOCHROME);
+
+    if (ft_error != FT_Err_Ok) {
+      fprintf(stderr, "loading char failed for %X with ft_error=%s\n", i,
+              FT_Error_String(ft_error) == NULL ? "<unknown error>"
+                                                : FT_Error_String(ft_error));
+    }
+  }
+
+  printf("#endif TTF_TO_BW_H\n");
+
+  /////////////////////////
+  // Cleanup
+  /////////////////////////
 ft_done_face:
   FT_Done_Face(ft_face);
 
