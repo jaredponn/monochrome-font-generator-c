@@ -18,12 +18,14 @@
         pname = "ttf-to-bw";
         version = "0.0.0";
 
-        nativeBuildInputs = [ pkgs.freetype ];
         src = ./.;
+
+        nativeBuildInputs = [ pkgs.cmake ];
+        buildInputs = [ pkgs.freetype ];
       };
 
       devShells.default = pkgs.mkShell {
-        packages = [ ];
+        packages = [ pkgs.ctags ];
         inputsFrom = [
           config.packages.default
         ];
