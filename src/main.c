@@ -4,6 +4,7 @@
  */
 #include "cli.h"
 
+#include <ctype.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <stdint.h>
@@ -117,8 +118,18 @@ int main(int argc, char *argv[]) {
   /////////////////////////
   // Creating the header
   /////////////////////////
-  fprintf(header_file, "#ifndef TTF_TO_BW_H\n");
-  fprintf(header_file, "#define TTF_TO_BW_H\n");
+  // char guard[256];
+  // int gn = snprintf(guard, sizeof(guard), "%s_TAB_H", args.name_prefix);
+  // if (gn < 0 || (size_t)gn >= sizeof(guard)) {
+  //   fprintf(stderr, "Name prefix too long for header guard\n");
+  //   status = 1;
+  //   goto close_source;
+  // }
+  // for (int i = 0; guard[i]; ++i)
+  //   guard[i] = toupper((unsigned char)guard[i]);
+
+  fprintf(header_file, "#ifndef %s_TAB_H\n", args.name_prefix);
+  fprintf(header_file, "#define %s_TAB_H\n", args.name_prefix);
 
   fprintf(header_file, "#include <stdint.h>\n");
 
@@ -138,7 +149,7 @@ int main(int argc, char *argv[]) {
   fprintf(header_file, "  int pitch; // pitch is an offset to add to a bitmap "
                        "pointer in order to go down one row.\n");
   fprintf(header_file, "  unsigned char const *buffer;\n");
-  fprintf(header_file, "} ttf_to_bw_slot_t;\n");
+  fprintf(header_file, "} %s_slot_t;\n", args.name_prefix);
   fprintf(header_file, "\n");
 
   fprintf(header_file, "\n");
@@ -147,10 +158,10 @@ int main(int argc, char *argv[]) {
                        "useful information to render the character");
   fprintf(header_file, " * the underlying freetype library with how to use\n");
   fprintf(header_file, " */\n");
-  fprintf(header_file,
-          "extern ttf_to_bw_slot_t const ttf_to_bw_char_map[UINT8_MAX + 1];\n");
+  fprintf(header_file, "extern %s_slot_t const %s_tab[UINT8_MAX + 1];\n",
+          args.name_prefix, args.name_prefix);
 
-  fprintf(header_file, "#endif /* TTF_TO_BW_H */\n");
+  fprintf(header_file, "#endif /* %s_TAB_H */\n", args.name_prefix);
 
   /////////////////////////
   // Creating the source
@@ -187,8 +198,8 @@ int main(int argc, char *argv[]) {
   }
 
   // Then, we create the mapping
-  fprintf(source_file,
-          "ttf_to_bw_slot_t const ttf_to_bw_char_map[UINT8_MAX + 1] = {\n");
+  fprintf(source_file, "%s_slot_t const %s_tab[UINT8_MAX + 1] = {\n",
+          args.name_prefix, args.name_prefix);
 
   for (int character = 0; character <= UINT8_MAX; ++character) {
     ft_error =
