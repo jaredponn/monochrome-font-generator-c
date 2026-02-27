@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
   for (const char *p = text; *p; ++p) {
     uint8_t ch = (uint8_t)*p;
-    char_map_slot_t const *slot = &char_map_tab[ch];
+    char_map_glyph_and_metrics_t const *slot = &char_map_tab[ch];
 
     int top = slot->bitmap_top;
     int bottom = (int)slot->rows - top;
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
   pen_x = 0;
   for (const char *p = text; *p; ++p) {
     uint8_t ch = (uint8_t)*p;
-    char_map_slot_t const *slot = &char_map_tab[ch];
+    char_map_glyph_and_metrics_t const *slot = &char_map_tab[ch];
 
     int glyph_x = pen_x + slot->bitmap_left;
     int glyph_y = max_ascent - slot->bitmap_top;
