@@ -33,7 +33,7 @@ monochrome-font-generator-c \
   --width <width> --height <height> \
   [--hdpi <hdpi>] [--vdpi <vdpi>] \
   [--file-prefix <prefix>] [--name-prefix <prefix>] \
-  [--lsb] [--invert] \
+  [--lsb] [--invert] [--advance-x] [--advance-y] \
   <input.ttf>
 ```
 
@@ -47,11 +47,13 @@ monochrome-font-generator-c \
 | `--name-prefix` | C symbol prefix for generated types and tables | `char_map` |
 | `--lsb` | Least significant bit is the leftmost pixel | Disabled, so MSB is leftmost |
 | `--invert` | Invert bitmap foreground and background colors | Disabled, so 1 = foreground, 0 = background |
+| `--advance-x` | Include `advance_x` field in the generated struct | Omitted |
+| `--advance-y` | Include `advance_y` field in the generated struct | Omitted |
 
 ### Example
 
 ```sh
-monochrome-font-generator-c --width 1024 --height 1024 myfont.ttf
+monochrome-font-generator-c --width 1024 --height 1024 --lsb --advance-x myfont.ttf
 ```
 
 This produces `char_map.tab.h` and `char_map.tab.c`. Include the header in your
