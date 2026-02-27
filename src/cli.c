@@ -41,7 +41,8 @@ void print_usage(const char *program) {
       "  --file-prefix <prefix>  Output file prefix (default: char_map)\n"
       "  --name-prefix <prefix>  C symbol name prefix (default: char_map)\n"
       "  --lsb                   Least significant bit is the leftmost pixel "
-      "(default: MSB i.e., the left most pixel has value 128)\n",
+      "(default: MSB is the leftmost pixel i.e., the left most pixel has value "
+      "128)\n",
       program);
 }
 
