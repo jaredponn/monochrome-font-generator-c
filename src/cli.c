@@ -41,9 +41,11 @@ void print_usage(const char *program) {
       "  --file-prefix <prefix>  Output file prefix (default: char_map)\n"
       "  --name-prefix <prefix>  C symbol name prefix (default: char_map)\n"
       "  --lsb                   Least significant bit is the leftmost pixel "
-      "(default: MSB is the leftmost pixel i.e., the left most pixel in a byte has value "
+      "(default: MSB is the leftmost pixel i.e., the left most pixel in a byte "
+      "has value "
       "128)\n"
-      "  --invert                Invert the bitmap foreground and background colors (default: 1 is the foreground [black] and 0 is the background [white])";
+      "  --invert                Invert the bitmap foreground and background "
+      "colors (default: 1 is the foreground and 0 is the background)");
 }
 
 int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
