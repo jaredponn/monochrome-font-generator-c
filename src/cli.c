@@ -43,7 +43,7 @@ void print_usage(const char *program) {
       program);
 }
 
-int parse_args(int argc, char *argv[], ttf_to_bw_args_t *out) {
+int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
   out->width = 0;
   out->height = 0;
   out->hdpi = 72;

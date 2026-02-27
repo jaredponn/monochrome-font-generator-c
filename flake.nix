@@ -1,5 +1,5 @@
 {
-  description = "ttf-to-bw";
+  description = "monochrome-font-generator-c";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
@@ -18,7 +18,7 @@
     perSystem = { config, pkgs, ... }: {
 
       packages.default = pkgs.stdenv.mkDerivation {
-        pname = "ttf-to-bw";
+        pname = "monochrome-font-generator-c";
         version = "0.0.0";
 
         src = ./.;

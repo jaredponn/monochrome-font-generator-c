@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   /////////////////////////
   // Parse the CLI arguments
   /////////////////////////
-  ttf_to_bw_args_t args = {0};
+  monochrome_font_generator_args_t args = {0};
 
   status = parse_args(argc, argv, &args);
 

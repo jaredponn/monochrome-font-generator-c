@@ -9,9 +9,9 @@ typedef struct {
   int height;
   int hdpi;
   int vdpi;
-} ttf_to_bw_args_t;
+} monochrome_font_generator_args_t;
 
-int parse_args(int argc, char *argv[], ttf_to_bw_args_t *out);
+int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out);
 void print_usage(const char *program);
 
 #endif
