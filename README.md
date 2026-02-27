@@ -12,7 +12,7 @@ The generator uses FreeType 2 to rasterize every glyph in monochrome mode
 (`FT_LOAD_MONOCHROME`). For each character it emits:
 
 - A `static const` byte array holding the bit-packed bitmap.
-- An entry in a `_slot_t` struct array containing the bitmap metrics
+- An entry in a `_glyph_and_metrics_t` struct array containing the bitmap metrics
   (`bitmap_left`, `bitmap_top`, `advance_x`, `advance_y`, `rows`, `width`,
   `pitch`) and a pointer to the bitmap buffer.
 
@@ -33,7 +33,7 @@ monochrome-font-generator-c \
   --width <width> --height <height> \
   [--hdpi <hdpi>] [--vdpi <vdpi>] \
   [--file-prefix <prefix>] [--name-prefix <prefix>] \
-  [--lsb] [--invert] [--advance-x] [--advance-y] \
+  [--lsb-leftmost] [--invert] [--advance-x] [--advance-y] \
   <input.ttf>
 ```
 
@@ -45,7 +45,7 @@ monochrome-font-generator-c \
 | `--vdpi` | Vertical device resolution in DPI | 72 |
 | `--file-prefix` | Output file path prefix (produces `<prefix>.tab.c` and `<prefix>.tab.h`) | `char_map` |
 | `--name-prefix` | C symbol prefix for generated types and tables | `char_map` |
-| `--lsb` | Least significant bit is the leftmost pixel | Disabled, so MSB is leftmost |
+| `--lsb-leftmost` | Least significant bit is the leftmost pixel | Disabled, so MSB is leftmost |
 | `--invert` | Invert bitmap foreground and background colors | Disabled, so 1 = foreground, 0 = background |
 | `--advance-x` | Include `advance_x` field in the generated struct | Omitted |
 | `--advance-y` | Include `advance_y` field in the generated struct | Omitted |
@@ -53,7 +53,7 @@ monochrome-font-generator-c \
 ### Example
 
 ```sh
-monochrome-font-generator-c --width 1024 --height 1024 --lsb --advance-x myfont.ttf
+$ monochrome-font-generator-c --width 1024 --height 1024 --lsb-leftmost --advance-x myfont.ttf
 ```
 
 This produces `char_map.tab.h` and `char_map.tab.c`. Include the header in your
