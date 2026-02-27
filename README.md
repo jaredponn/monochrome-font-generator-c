@@ -17,7 +17,7 @@ The generator uses FreeType 2 to rasterize every glyph in monochrome mode
   `pitch`) and a pointer to the bitmap buffer.
 
 The consuming application includes the generated header, iterates over a string,
-and blits each glyph's bitmap onto a canvas using the provided metrics.
+and writes each glyph's bitmap onto a canvas using the provided parameters.
 
 ## Usage
 
@@ -26,6 +26,7 @@ monochrome-font-generator-c \
   --width <width> --height <height> \
   [--hdpi <hdpi>] [--vdpi <vdpi>] \
   [--file-prefix <prefix>] [--name-prefix <prefix>] \
+  [--lsb] [--invert] \
   <input.ttf>
 ```
 
@@ -37,6 +38,8 @@ monochrome-font-generator-c \
 | `--vdpi` | Vertical device resolution in DPI | 72 |
 | `--file-prefix` | Output file path prefix (produces `<prefix>.tab.c` and `<prefix>.tab.h`) | `char_map` |
 | `--name-prefix` | C symbol prefix for generated types and tables | `char_map` |
+| `--lsb` | Least significant bit is the leftmost pixel | Disabled, so MSB is leftmost |
+| `--invert` | Invert bitmap foreground and background colors | Disabled, so 1 = foreground, 0 = background |
 
 ### Example
 
@@ -61,5 +64,12 @@ Requires CMake >= 3.20 and FreeType 2.
 
 ```sh
 cmake -B build
+cmake --build build
+```
+
+For an optimized release build with `-O3`:
+
+```sh
+cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
