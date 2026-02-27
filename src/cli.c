@@ -53,6 +53,19 @@ void print_usage(const char *program) {
       program);
 }
 
+typedef enum {
+  WIDTH,
+  HEIGHT,
+  HDPI,
+  VDPI,
+  FILE_PREFIX,
+  NAME_PREFIX,
+  LSB,
+  INVERT,
+  ADVANCE_X,
+  ADVANCE_Y,
+} cli_option_t;
+
 int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
   out->width = 0;
   out->height = 0;
@@ -67,54 +80,54 @@ int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
   out->advance_y = 0;
 
   static struct option long_options[] = {
-      {"width", required_argument, NULL, 0},
-      {"height", required_argument, NULL, 0},
-      {"hdpi", required_argument, NULL, 0},
-      {"vdpi", required_argument, NULL, 0},
-      {"file-prefix", required_argument, NULL, 0},
-      {"name-prefix", required_argument, NULL, 0},
-      {"lsb", no_argument, NULL, 0},
-      {"invert", no_argument, NULL, 0},
-      {"advance-x", no_argument, NULL, 0},
-      {"advance-y", no_argument, NULL, 0},
+      {"width", required_argument, NULL, WIDTH},
+      {"height", required_argument, NULL, HEIGHT},
+      {"hdpi", required_argument, NULL, HDPI},
+      {"vdpi", required_argument, NULL, VDPI},
+      {"file-prefix", required_argument, NULL, FILE_PREFIX},
+      {"name-prefix", required_argument, NULL, NAME_PREFIX},
+      {"lsb", no_argument, NULL, LSB},
+      {"invert", no_argument, NULL, INVERT},
+      {"advance-x", no_argument, NULL, ADVANCE_X},
+      {"advance-y", no_argument, NULL, ADVANCE_Y},
       {NULL, 0, NULL, 0},
   };
 
   int opt;
   while ((opt = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
     switch (opt) {
-    case 'w':
+    case WIDTH:
       if (parse_int(optarg, "width", &out->width))
         return 1;
       break;
-    case 'h':
+    case HEIGHT:
       if (parse_int(optarg, "height", &out->height))
         return 1;
       break;
-    case 'x':
+    case HDPI:
       if (parse_int(optarg, "hdpi", &out->hdpi))
         return 1;
       break;
-    case 'y':
+    case VDPI:
       if (parse_int(optarg, "vdpi", &out->vdpi))
         return 1;
       break;
-    case 'p':
+    case FILE_PREFIX:
       out->file_prefix = optarg;
       break;
-    case 'n':
+    case NAME_PREFIX:
       out->name_prefix = optarg;
       break;
-    case 'l':
+    case LSB:
       out->lsb = 1;
       break;
-    case 'i':
+    case INVERT:
       out->invert = 1;
       break;
-    case 'a':
+    case ADVANCE_X:
       out->advance_x = 1;
       break;
-    case 'b':
+    case ADVANCE_Y:
       out->advance_y = 1;
       break;
     default:
