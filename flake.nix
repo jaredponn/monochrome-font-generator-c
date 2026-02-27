@@ -16,7 +16,7 @@
     ];
 
     flake.overlays.default = self: super: {
-      monochrome-font-generator-c = config.packages.${self.system}.default;
+      monochrome-font-generator-c = config.packages.${self.stdenv.hostPlatform.system}.default;
     };
 
     perSystem = { config, pkgs, ... }: {
