@@ -1,9 +1,7 @@
 name: CI
-
 on:
   push:
     branches: "**"
-
 jobs:
   flake-check:
     runs-on: ubuntu-latest

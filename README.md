@@ -29,14 +29,14 @@ monochrome-font-generator-c \
   <input.ttf>
 ```
 
-| Flag             | Description                                      | Default    |
+| Flag | Description | Default |
 |------------------|--------------------------------------------------|------------|
-| `--width`        | Glyph width in 1/64 of a point (required)        | —          |
-| `--height`       | Glyph height in 1/64 of a point (required)       | —          |
-| `--hdpi`         | Horizontal device resolution in DPI               | 72         |
-| `--vdpi`         | Vertical device resolution in DPI                 | 72         |
-| `--file-prefix`  | Output file path prefix (produces `<prefix>.tab.c` and `<prefix>.tab.h`) | `char_map` |
-| `--name-prefix`  | C symbol prefix for generated types and tables    | `char_map` |
+| `--width` | Glyph width in 1/64 of a point (required) | — |
+| `--height` | Glyph height in 1/64 of a point (required) | — |
+| `--hdpi` | Horizontal device resolution in DPI | 72 |
+| `--vdpi` | Vertical device resolution in DPI | 72 |
+| `--file-prefix` | Output file path prefix (produces `<prefix>.tab.c` and `<prefix>.tab.h`) | `char_map` |
+| `--name-prefix` | C symbol prefix for generated types and tables | `char_map` |
 
 ### Example
 

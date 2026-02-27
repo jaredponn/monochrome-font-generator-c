@@ -28,7 +28,7 @@
       };
 
       devShells.default = pkgs.mkShell {
-        packages = [ pkgs.ctags ];
+        packages = [ pkgs.ctags pkgs.pre-commit ];
         inputsFrom = [
           config.packages.default
         ];
