@@ -11,6 +11,8 @@ typedef struct {
   int vdpi;
   int lsb;
   int invert;
+  int advance_x;
+  int advance_y;
 } monochrome_font_generator_args_t;
 
 int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out);

@@ -31,7 +31,7 @@ void print_usage(const char *program) {
       stderr,
       "Usage: %s --width <width> --height <height> [--hdpi <hdpi>] "
       "[--vdpi <vdpi>] [--file-prefix <prefix>] [--name-prefix <prefix>] "
-      "[--lsb] [--invert] <input.ttf>\n"
+      "[--lsb] [--invert] [--advance-x] [--advance-y] <input.ttf>\n"
       "  --width <width>    Glyph width in 1/64 of a point (a point is "
       "1/72 of an inch)\n"
       "  --height <height>  Glyph height in 1/64 of point (a point is "
@@ -45,7 +45,11 @@ void print_usage(const char *program) {
       "has value "
       "128)\n"
       "  --invert                Invert the bitmap foreground and background "
-      "colors (default: 1 is the foreground and 0 is the background)",
+      "colors (default: 1 is the foreground and 0 is the background)\n"
+      "  --advance-x             Include advance_x field in the generated "
+      "struct (default: omitted)\n"
+      "  --advance-y             Include advance_y field in the generated "
+      "struct (default: omitted)\n",
       program);
 }
 
@@ -59,6 +63,8 @@ int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
   out->name_prefix = "char_map";
   out->lsb = 0;
   out->invert = 0;
+  out->advance_x = 0;
+  out->advance_y = 0;
 
   static struct option long_options[] = {
       {"width", required_argument, NULL, 'w'},
@@ -69,6 +75,8 @@ int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
       {"name-prefix", required_argument, NULL, 'n'},
       {"lsb", no_argument, NULL, 'l'},
       {"invert", no_argument, NULL, 'i'},
+      {"advance-x", no_argument, NULL, 'a'},
+      {"advance-y", no_argument, NULL, 'b'},
       {NULL, 0, NULL, 0},
   };
 
@@ -102,6 +110,12 @@ int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
       break;
     case 'i':
       out->invert = 1;
+      break;
+    case 'a':
+      out->advance_x = 1;
+      break;
+    case 'b':
+      out->advance_y = 1;
       break;
     default:
       return 1;

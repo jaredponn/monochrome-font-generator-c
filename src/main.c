@@ -129,10 +129,20 @@ int main(int argc, char *argv[]) {
   fprintf(header_file, " * the underlying freetype library with how to use\n");
   fprintf(header_file, " */\n");
   fprintf(header_file, "typedef struct {\n");
-  fprintf(header_file, "  int bitmap_left; //\n");
-  fprintf(header_file, "  int bitmap_top; //\n");
-  fprintf(header_file, "  long int advance_x; //\n");
-  fprintf(header_file, "  long int advance_y; //\n");
+  fprintf(header_file, "  int bitmap_left; // The bitmap's left bearing "
+                       "expressed in integer pixels "
+                       "<https://freetype.org/freetype2/docs/reference/"
+                       "ft2-glyph_retrieval.html#ft_glyphslotrec>\n");
+  fprintf(header_file,
+          "  int bitmap_top; // The bitmap's top bearing expressed in integer "
+          "pixels. This is the distance from the baseline to the top-most "
+          "glyph scanline, upwards y coordinates being positive.  "
+          "<https://freetype.org/freetype2/docs/reference/"
+          "ft2-glyph_retrieval.html#ft_glyphslotrec>\n");
+  if (args.advance_x)
+    fprintf(header_file, "  long int advance_x; //\n");
+  if (args.advance_y)
+    fprintf(header_file, "  long int advance_y; //\n");
   fprintf(header_file, "  unsigned int rows; // number of bitmap rows\n");
   fprintf(header_file,
           "  unsigned int width; // number of pixels in bitmap row\n");
@@ -219,13 +229,17 @@ int main(int argc, char *argv[]) {
 
     FT_GlyphSlot ft_slot = ft_face->glyph;
 
+    fprintf(source_file, " { .bitmap_left = %d, .bitmap_top = %d, ",
+            ft_slot->bitmap_left, ft_slot->bitmap_top);
+    if (args.advance_x)
+      fprintf(source_file, ".advance_x = %ld, ", ft_slot->advance.x);
+    if (args.advance_y)
+      fprintf(source_file, ".advance_y = %ld, ", ft_slot->advance.y);
     fprintf(source_file,
-            " { .bitmap_left = %d, .bitmap_top = %d, .advance_x = %ld, "
-            ".advance_y = %ld, .rows = %d, .width = %d, .pitch = %d, .buffer = "
+            ".rows = %d, .width = %d, .pitch = %d, .buffer = "
             "char_buffer_%" PRIu8 " },\n",
-            ft_slot->bitmap_left, ft_slot->bitmap_top, ft_slot->advance.x,
-            ft_slot->advance.y, ft_slot->bitmap.rows, ft_slot->bitmap.width,
-            ft_slot->bitmap.pitch, character);
+            ft_slot->bitmap.rows, ft_slot->bitmap.width, ft_slot->bitmap.pitch,
+            character);
   }
   fprintf(source_file, "};\n");
 
