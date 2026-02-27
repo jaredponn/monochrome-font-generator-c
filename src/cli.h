@@ -3,6 +3,7 @@
 
 typedef struct {
   const char *input_ttf;
+  const char *file_prefix;
   int width;
   int height;
   int hdpi;

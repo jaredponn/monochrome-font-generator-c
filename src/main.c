@@ -79,17 +79,22 @@ int main(int argc, char *argv[]) {
   /////////////////////////
   // Open output files
   /////////////////////////
-  FILE *header_file = fopen("ttf_to_bw.h", "w");
+  char header_path[512];
+  char source_path[512];
+  snprintf(header_path, sizeof(header_path), "%s.tab.h", args.file_prefix);
+  snprintf(source_path, sizeof(source_path), "%s.tab.c", args.file_prefix);
+
+  FILE *header_file = fopen(header_path, "w");
   if (header_file == NULL) {
-    fprintf(stderr, "Failed to open ttf_to_bw.h for writing: %s\n",
+    fprintf(stderr, "Failed to open %s for writing: %s\n", header_path,
             strerror(errno));
     status = 1;
     goto ft_done_face;
   }
 
-  FILE *source_file = fopen("ttf_to_bw.c", "w");
+  FILE *source_file = fopen(source_path, "w");
   if (source_file == NULL) {
-    fprintf(stderr, "Failed to open ttf_to_bw.c for writing: %s\n",
+    fprintf(stderr, "Failed to open %s for writing: %s\n", source_path,
             strerror(errno));
     status = 1;
     goto close_header;
@@ -129,23 +134,24 @@ int main(int argc, char *argv[]) {
   fprintf(header_file, " * the underlying freetype library with how to use\n");
   fprintf(header_file, " */\n");
   fprintf(header_file,
-          "extern ttf_to_bw_slot_t const ttf_to_bw_character_map[UINT8_MAX];");
+          "extern ttf_to_bw_slot_t const ttf_to_bw_char_map[UINT8_MAX + 1];\n");
 
   fprintf(header_file, "#endif /* TTF_TO_BW_H */\n");
 
   /////////////////////////
   // Creating the source
   /////////////////////////
-  fprintf(source_file, "#include \"ttf_to_bw.h\"\n");
+  fprintf(source_file, "#include \"%s\"\n", header_path);
   fprintf(source_file, "\n");
 
   // First, create buffers of all the bit packed data
-  for (uint8_t character = 0; character < UINT8_MAX; ++character) {
+  for (int character = 0; character <= UINT8_MAX; ++character) {
     ft_error =
-        FT_Load_Char(ft_face, character, FT_LOAD_RENDER | FT_LOAD_MONOCHROME);
+        FT_Load_Char(ft_face, character,
+                     FT_LOAD_RENDER | FT_LOAD_MONOCHROME | FT_LOAD_TARGET_MONO);
 
     if (ft_error != FT_Err_Ok) {
-      fprintf(stderr, "loading char failed for %X with ft_error=%s\n",
+      fprintf(stderr, "loading char failed for character %d with ft_error=%s\n",
               character,
               FT_Error_String(ft_error) == NULL ? "<unknown error>"
                                                 : FT_Error_String(ft_error));
@@ -153,31 +159,30 @@ int main(int argc, char *argv[]) {
     }
 
     FT_GlyphSlot ft_slot = ft_face->glyph;
+    int abs_pitch = ft_slot->bitmap.pitch < 0 ? -ft_slot->bitmap.pitch
+                                              : ft_slot->bitmap.pitch;
+    size_t buffer_size = (size_t)ft_slot->bitmap.rows * (size_t)abs_pitch;
 
     fprintf(source_file,
-            "static unsigned char const char_buffer_%02" PRIu8 "[] = {",
+            "static unsigned char const char_buffer_%" PRIu8 "[] = {",
             (int)character);
-    size_t bitmap_index = 0;
-    for (size_t bitmap_column = 0; bitmap_column < ft_slot->bitmap.width;
-         ++bitmap_column) {
-      for (size_t bitmap_row = 0; bitmap_row < ft_slot->bitmap.rows;
-           ++bitmap_row) {
-        fprintf(source_file, "0x%02X,", ft_slot->bitmap.buffer[bitmap_index++]);
-      }
+    for (size_t i = 0; i < buffer_size; ++i) {
+      fprintf(source_file, "0x%02X,", ft_slot->bitmap.buffer[i]);
     }
     fprintf(source_file, "};\n");
   }
 
   // Then, we create the mapping
   fprintf(source_file,
-          "ttf_to_bw_slot_t const ttf_to_bw_character_map[UINT8_MAX] = {\n");
+          "ttf_to_bw_slot_t const ttf_to_bw_char_map[UINT8_MAX + 1] = {\n");
 
-  for (uint8_t character = 0; character < UINT8_MAX; ++character) {
+  for (int character = 0; character <= UINT8_MAX; ++character) {
     ft_error =
-        FT_Load_Char(ft_face, character, FT_LOAD_RENDER | FT_LOAD_MONOCHROME);
+        FT_Load_Char(ft_face, character,
+                     FT_LOAD_RENDER | FT_LOAD_MONOCHROME | FT_LOAD_TARGET_MONO);
 
     if (ft_error != FT_Err_Ok) {
-      fprintf(stderr, "loading char failed for %X with ft_error=%s\n",
+      fprintf(stderr, "loading char failed for character %d with ft_error=%s\n",
               character,
               FT_Error_String(ft_error) == NULL ? "<unknown error>"
                                                 : FT_Error_String(ft_error));
@@ -191,7 +196,7 @@ int main(int argc, char *argv[]) {
     fprintf(source_file,
             " { .bitmap_left = %d, .bitmap_top = %d, .advance_x = %ld, "
             ".advance_y = %ld, .rows = %d, .width = %d, .pitch = %d, .buffer = "
-            "char_buffer_%02" PRIu8 " },\n",
+            "char_buffer_%" PRIu8 " },\n",
             ft_slot->bitmap_left, ft_slot->bitmap_top, ft_slot->advance.x,
             ft_slot->advance.y, ft_slot->bitmap.rows, ft_slot->bitmap.width,
             ft_slot->bitmap.pitch, character);

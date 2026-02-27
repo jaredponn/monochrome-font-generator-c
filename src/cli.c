@@ -35,7 +35,8 @@ void print_usage(const char *program) {
           "  --height <height>  Glyph height in 1/64 of point (a point is "
           "1/72 of an inch)\n"
           "  --hdpi <hdpi>      Horizontal device resolution (default: 72)\n"
-          "  --vdpi <vdpi>      Vertical device resolution (default: 72)\n",
+          "  --vdpi <vdpi>      Vertical device resolution (default: 72)\n"
+          "  --file-prefix <prefix>  Output file prefix (default: char_map)\n",
           program);
 }
 
@@ -45,12 +46,14 @@ int parse_args(int argc, char *argv[], ttf_to_bw_args_t *out) {
   out->hdpi = 72;
   out->vdpi = 72;
   out->input_ttf = NULL;
+  out->file_prefix = "char_map";
 
   static struct option long_options[] = {
       {"width", required_argument, NULL, 'w'},
       {"height", required_argument, NULL, 'h'},
       {"hdpi", required_argument, NULL, 'x'},
       {"vdpi", required_argument, NULL, 'y'},
+      {"file-prefix", required_argument, NULL, 'p'},
       {NULL, 0, NULL, 0},
   };
 
@@ -72,6 +75,9 @@ int parse_args(int argc, char *argv[], ttf_to_bw_args_t *out) {
     case 'y':
       if (parse_int(optarg, "vdpi", &out->vdpi))
         return 1;
+      break;
+    case 'p':
+      out->file_prefix = optarg;
       break;
     default:
       return 1;
