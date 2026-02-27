@@ -25,6 +25,8 @@
 
         nativeBuildInputs = [ pkgs.cmake ];
         buildInputs = [ pkgs.freetype ];
+
+        cmakeFlags = [ "-DCMAKE_BUILD_TYPE=Release" ];
       };
 
       devShells.default = pkgs.mkShell {
