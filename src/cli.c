@@ -45,7 +45,8 @@ void print_usage(const char *program) {
       "has value "
       "128)\n"
       "  --invert                Invert the bitmap foreground and background "
-      "colors (default: 1 is the foreground and 0 is the background)");
+      "colors (default: 1 is the foreground and 0 is the background)",
+      program);
 }
 
 int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
