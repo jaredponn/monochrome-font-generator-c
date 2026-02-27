@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
             (int)character);
     for (size_t i = 0; i < buffer_size; ++i) {
       unsigned char byte = ft_slot->bitmap.buffer[i];
-      if (args.lsb) {
+      if (args.leftmost_lsb) {
         // Magic trick to reverse the bits in a byte
         // <https://graphics.stanford.edu/~seander/bithacks.html#ReverseByteWith32Bits>
         byte = ((byte * 0x0802LU & 0x22110LU) | (byte * 0x8020LU & 0x88440LU)) *

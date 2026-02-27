@@ -9,7 +9,7 @@ typedef struct {
   int height;
   int hdpi;
   int vdpi;
-  int lsb;
+  int leftmost_lsb;
   int invert;
   int advance_x;
   int advance_y;

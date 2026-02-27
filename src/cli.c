@@ -31,7 +31,7 @@ void print_usage(const char *program) {
       stderr,
       "Usage: %s --width <width> --height <height> [--hdpi <hdpi>] "
       "[--vdpi <vdpi>] [--file-prefix <prefix>] [--name-prefix <prefix>] "
-      "[--lsb] [--invert] [--advance-x] [--advance-y] <input.ttf>\n"
+      "[--leftmost-lsb] [--invert] [--advance-x] [--advance-y] <input.ttf>\n"
       "  --width <width>    Glyph width in 1/64 of a point (a point is "
       "1/72 of an inch)\n"
       "  --height <height>  Glyph height in 1/64 of point (a point is "
@@ -40,7 +40,7 @@ void print_usage(const char *program) {
       "  --vdpi <vdpi>      Vertical device resolution (default: 72)\n"
       "  --file-prefix <prefix>  Output file prefix (default: char_map)\n"
       "  --name-prefix <prefix>  C symbol name prefix (default: char_map)\n"
-      "  --lsb                   Least significant bit is the leftmost pixel "
+      "  --leftmost-lsb          Least significant bit is the leftmost pixel "
       "(default: MSB is the leftmost pixel i.e., the left most pixel in a byte "
       "has value "
       "128)\n"
@@ -60,7 +60,7 @@ typedef enum {
   VDPI,
   FILE_PREFIX,
   NAME_PREFIX,
-  LSB,
+  LEFTMOST_LSB,
   INVERT,
   ADVANCE_X,
   ADVANCE_Y,
@@ -74,7 +74,7 @@ int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
   out->input_ttf = NULL;
   out->file_prefix = "char_map";
   out->name_prefix = "char_map";
-  out->lsb = 0;
+  out->leftmost_lsb = 0;
   out->invert = 0;
   out->advance_x = 0;
   out->advance_y = 0;
@@ -86,7 +86,7 @@ int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
       {"vdpi", required_argument, NULL, VDPI},
       {"file-prefix", required_argument, NULL, FILE_PREFIX},
       {"name-prefix", required_argument, NULL, NAME_PREFIX},
-      {"lsb", no_argument, NULL, LSB},
+      {"leftmost-lsb", no_argument, NULL, LEFTMOST_LSB},
       {"invert", no_argument, NULL, INVERT},
       {"advance-x", no_argument, NULL, ADVANCE_X},
       {"advance-y", no_argument, NULL, ADVANCE_Y},
@@ -118,8 +118,8 @@ int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
     case NAME_PREFIX:
       out->name_prefix = optarg;
       break;
-    case LSB:
-      out->lsb = 1;
+    case LEFTMOST_LSB:
+      out->leftmost_lsb = 1;
       break;
     case INVERT:
       out->invert = 1;
