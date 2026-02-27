@@ -30,7 +30,8 @@ void print_usage(const char *program) {
   fprintf(
       stderr,
       "Usage: %s --width <width> --height <height> [--hdpi <hdpi>] "
-      "[--vdpi <vdpi>] <input.ttf>\n"
+      "[--vdpi <vdpi>] [--file-prefix <prefix>] [--name-prefix <prefix>] "
+      "<input.ttf>\n"
       "  --width <width>    Glyph width in 1/64 of a point (a point is "
       "1/72 of an inch)\n"
       "  --height <height>  Glyph height in 1/64 of point (a point is "
@@ -38,7 +39,7 @@ void print_usage(const char *program) {
       "  --hdpi <hdpi>      Horizontal device resolution (default: 72)\n"
       "  --vdpi <vdpi>      Vertical device resolution (default: 72)\n"
       "  --file-prefix <prefix>  Output file prefix (default: char_map)\n"
-      "  --name-prefix <prefix>  C symbol name prefix (default: ttf_to_bw)\n",
+      "  --name-prefix <prefix>  C symbol name prefix (default: char_map)\n",
       program);
 }
 
@@ -49,7 +50,7 @@ int parse_args(int argc, char *argv[], ttf_to_bw_args_t *out) {
   out->vdpi = 72;
   out->input_ttf = NULL;
   out->file_prefix = "char_map";
-  out->name_prefix = "ttf_to_bw";
+  out->name_prefix = "char_map";
 
   static struct option long_options[] = {
       {"width", required_argument, NULL, 'w'},
