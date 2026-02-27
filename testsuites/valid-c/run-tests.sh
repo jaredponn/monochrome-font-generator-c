@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-set -eu pipefail
+set -eu
 
 # DESCRIPTION
 # ~~~~~~~~~~~
 # Runs all tests in the `test-cases` directory
 
-find "./test-cases" -name '*.sh' -print0 \
+find "${1:-./test-cases}" -name '*.sh' -print0 \
   | xargs -0 -P0 -I{} bash -c '
     TEST_WORKING_DIRECTORY=$(mktemp -d)
     trap "rm -rf \"$TEST_WORKING_DIRECTORY\"" EXIT

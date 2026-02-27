@@ -8,8 +8,9 @@
       nativeBuildInputs = [ config.packages.default ];
 
       buildPhase = ''
-        set -e
+        set -eu
         export TTF=${../fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf}
+        export TEST_CASES_DIRECTORY=
 
         bash ${./run-tests.sh} ${./test-cases}
       '';
