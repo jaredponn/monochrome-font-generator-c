@@ -140,9 +140,19 @@ int main(int argc, char *argv[]) {
           "<https://freetype.org/freetype2/docs/reference/"
           "ft2-glyph_retrieval.html#ft_glyphslotrec>\n");
   if (args.advance_x)
-    fprintf(header_file, "  long int advance_x; //\n");
+    fprintf(header_file,
+            "  long int advance_x; // The horizontal distance to increment "
+            "(for left-to-right writing) or decrement (for right-to-left "
+            "writing) the pen position after a glyph has been rendered when "
+            "processing text in pixels "
+            "<https://freetype.org/freetype2/docs/glyphs/"
+            "glyphs-3.html#section-3>\n");
   if (args.advance_y)
-    fprintf(header_file, "  long int advance_y; //\n");
+    fprintf(header_file, "  long int advance_y; // The vertical distance to "
+                         "decrement (for top-to-bottom writing) or increment "
+                         "the pen position after a glyph has been rendered in "
+                         "pixels<https://freetype.org/freetype2/docs/glyphs/"
+                         "glyphs-3.html#section-3>\n");
   fprintf(header_file, "  unsigned int rows; // number of bitmap rows\n");
   fprintf(header_file,
           "  unsigned int width; // number of pixels in bitmap row\n");
@@ -231,10 +241,12 @@ int main(int argc, char *argv[]) {
 
     fprintf(source_file, " { .bitmap_left = %d, .bitmap_top = %d, ",
             ft_slot->bitmap_left, ft_slot->bitmap_top);
+    // Divide by 64 to convert these into pixels from FreeType's 26.6
+    // fixed-point numbers format
     if (args.advance_x)
-      fprintf(source_file, ".advance_x = %ld, ", ft_slot->advance.x);
+      fprintf(source_file, ".advance_x = %ld, ", ft_slot->advance.x / 64);
     if (args.advance_y)
-      fprintf(source_file, ".advance_y = %ld, ", ft_slot->advance.y);
+      fprintf(source_file, ".advance_y = %ld, ", ft_slot->advance.y / 64);
     fprintf(source_file,
             ".rows = %d, .width = %d, .pitch = %d, .buffer = "
             "char_buffer_%" PRIu8 " },\n",

@@ -67,16 +67,16 @@ int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
   out->advance_y = 0;
 
   static struct option long_options[] = {
-      {"width", required_argument, NULL, 'w'},
-      {"height", required_argument, NULL, 'h'},
-      {"hdpi", required_argument, NULL, 'x'},
-      {"vdpi", required_argument, NULL, 'y'},
-      {"file-prefix", required_argument, NULL, 'p'},
-      {"name-prefix", required_argument, NULL, 'n'},
-      {"lsb", no_argument, NULL, 'l'},
-      {"invert", no_argument, NULL, 'i'},
-      {"advance-x", no_argument, NULL, 'a'},
-      {"advance-y", no_argument, NULL, 'b'},
+      {"width", required_argument, NULL, 0},
+      {"height", required_argument, NULL, 0},
+      {"hdpi", required_argument, NULL, 0},
+      {"vdpi", required_argument, NULL, 0},
+      {"file-prefix", required_argument, NULL, 0},
+      {"name-prefix", required_argument, NULL, 0},
+      {"lsb", no_argument, NULL, 0},
+      {"invert", no_argument, NULL, 0},
+      {"advance-x", no_argument, NULL, 0},
+      {"advance-y", no_argument, NULL, 0},
       {NULL, 0, NULL, 0},
   };
 
