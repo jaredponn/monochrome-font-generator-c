@@ -25,7 +25,13 @@
         pname = "monochrome-font-generator-c";
         version = "0.0.0";
 
-        src = ./.;
+        src = pkgs.lib.fileset.toSource {
+          root = ./.;
+          fileset = pkgs.lib.fileset.unions [
+            ./CMakeLists.txt
+            ./src
+          ];
+        };
 
         nativeBuildInputs = [ pkgs.cmake ];
         buildInputs = [ pkgs.freetype ];
