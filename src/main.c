@@ -190,6 +190,9 @@ int main(int argc, char *argv[]) {
                    0x10101LU >>
                16;
       }
+      if (args.invert) {
+        byte = ~byte;
+      }
       fprintf(source_file, "0x%02X,", byte);
     }
     fprintf(source_file, "};\n");
