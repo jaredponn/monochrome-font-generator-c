@@ -31,7 +31,7 @@ void print_usage(const char *program) {
       stderr,
       "Usage: %s --width <width> --height <height> [--hdpi <hdpi>] "
       "[--vdpi <vdpi>] [--file-prefix <prefix>] [--name-prefix <prefix>] "
-      "<input.ttf>\n"
+      "[--lsb] <input.ttf>\n"
       "  --width <width>    Glyph width in 1/64 of a point (a point is "
       "1/72 of an inch)\n"
       "  --height <height>  Glyph height in 1/64 of point (a point is "
@@ -39,7 +39,9 @@ void print_usage(const char *program) {
       "  --hdpi <hdpi>      Horizontal device resolution (default: 72)\n"
       "  --vdpi <vdpi>      Vertical device resolution (default: 72)\n"
       "  --file-prefix <prefix>  Output file prefix (default: char_map)\n"
-      "  --name-prefix <prefix>  C symbol name prefix (default: char_map)\n",
+      "  --name-prefix <prefix>  C symbol name prefix (default: char_map)\n"
+      "  --lsb                   Least significant bit is the leftmost pixel "
+      "(default: MSB i.e., the left most pixel has value 128)\n",
       program);
 }
 
@@ -51,6 +53,7 @@ int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
   out->input_ttf = NULL;
   out->file_prefix = "char_map";
   out->name_prefix = "char_map";
+  out->lsb = 0;
 
   static struct option long_options[] = {
       {"width", required_argument, NULL, 'w'},
@@ -59,6 +62,7 @@ int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
       {"vdpi", required_argument, NULL, 'y'},
       {"file-prefix", required_argument, NULL, 'p'},
       {"name-prefix", required_argument, NULL, 'n'},
+      {"lsb", no_argument, NULL, 'l'},
       {NULL, 0, NULL, 0},
   };
 
@@ -86,6 +90,9 @@ int parse_args(int argc, char *argv[], monochrome_font_generator_args_t *out) {
       break;
     case 'n':
       out->name_prefix = optarg;
+      break;
+    case 'l':
+      out->lsb = 1;
       break;
     default:
       return 1;
