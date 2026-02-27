@@ -81,8 +81,22 @@ int main(int argc, char *argv[]) {
   /////////////////////////
   char header_path[512];
   char source_path[512];
-  snprintf(header_path, sizeof(header_path), "%s.tab.h", args.file_prefix);
-  snprintf(source_path, sizeof(source_path), "%s.tab.c", args.file_prefix);
+
+  status =
+      snprintf(header_path, sizeof(header_path), "%s.tab.h", args.file_prefix);
+  if (status < 0 || (size_t)status >= sizeof(header_path)) {
+    fprintf(stderr, "File prefix too long for header path\n");
+    status = 1;
+    goto ft_done_face;
+  }
+
+  status =
+      snprintf(source_path, sizeof(source_path), "%s.tab.c", args.file_prefix);
+  if (status < 0 || (size_t)status >= sizeof(source_path)) {
+    fprintf(stderr, "File prefix too long for source path\n");
+    status = 1;
+    goto ft_done_face;
+  }
 
   FILE *header_file = fopen(header_path, "w");
   if (header_file == NULL) {
