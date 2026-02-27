@@ -128,6 +128,40 @@ int main(int argc, char *argv[]) {
           "as an example of\n");
   fprintf(header_file, " * the underlying freetype library with how to use\n");
   fprintf(header_file, " */\n");
+
+  // Global metrics
+  fprintf(header_file,
+          "// Various global metrics converted to the pixel unit from "
+          "<https://freetype.org/freetype2/docs/reference/"
+          "ft2-sizing_and_scaling.html#ft_size_metrics>\n");
+
+  fprintf(header_file, "// The height global metric "
+                       "<https://freetype.org/freetype2/docs/tutorial/"
+                       "step2.html> (useful for rendering \\n) in pixels\n");
+  fprintf(header_file, "extern long int const %s_height;\n", args.name_prefix);
+
+  fprintf(header_file,
+          "// The ascender global metric "
+          "<https://freetype.org/freetype2/docs/tutorial/step2.html> (useful "
+          "for computing bounding boxes of rendered text) in pixels\n");
+  fprintf(header_file, "extern long int const %s_ascender;\n",
+          args.name_prefix);
+
+  fprintf(header_file,
+          "// The descender global metric "
+          "<https://freetype.org/freetype2/docs/tutorial/step2.html> (useful "
+          "for computing bounding boxes of rendered text) in pixels\n");
+  fprintf(header_file, "extern long int const %s_descender;\n",
+          args.name_prefix);
+
+  fprintf(header_file,
+          "// The max advance global metric "
+          "<https://freetype.org/freetype2/docs/tutorial/step2.html> (useful "
+          "for computing bounding boxes of rendered text) in pixels\n");
+  fprintf(header_file, "extern long int const %s_max_advance;\n",
+          args.name_prefix);
+
+  // Define the struct which contains a glyph and the corresponding metrics
   fprintf(header_file, "typedef struct {\n");
   fprintf(header_file, "  int bitmap_left; // The bitmap's left bearing "
                        "expressed in integer pixels "
@@ -164,6 +198,8 @@ int main(int argc, char *argv[]) {
 
   fprintf(header_file, "\n");
 
+  // Declare the table which maps ASCII characters to the corresponding glyph
+  // and metrics
   fprintf(header_file, "/** The character mapping from ASCII characters to the "
                        "useful information to render the character");
   fprintf(header_file, " * the underlying freetype library with how to use\n");
@@ -180,7 +216,21 @@ int main(int argc, char *argv[]) {
   fprintf(source_file, "#include \"%s\"\n", header_path);
   fprintf(source_file, "\n");
 
-  // First, create buffers of all the bit packed data
+  // Write the global metrics
+  fprintf(header_file, "long int const %s_height = %ld;\n", args.name_prefix,
+          ft_face->size->metrics.height / 64);
+
+  fprintf(header_file, "long int const %s_ascender = %ld;\n", args.name_prefix,
+          ft_face->size->metrics.ascender / 64);
+
+  fprintf(header_file, "long int const %s_descender = %ld;\n", args.name_prefix,
+          ft_face->size->metrics.descender / 64);
+
+  fprintf(header_file, "long int const %s_max_advance = %ld;\n",
+          args.name_prefix, ft_face->size->metrics.max_advance / 64);
+  fprintf(source_file, "\n");
+
+  // Create the bitmap buffers
   for (int character = 0; character <= UINT8_MAX; ++character) {
     ft_error =
         FT_Load_Char(ft_face, character,
@@ -219,7 +269,7 @@ int main(int argc, char *argv[]) {
     fprintf(source_file, "};\n");
   }
 
-  // Then, we create the mapping
+  // Create the char to glyph and associated metrics mapping
   fprintf(source_file,
           "%s_glyph_and_metrics_t const %s_tab[UINT8_MAX + 1] = {\n",
           args.name_prefix, args.name_prefix);
