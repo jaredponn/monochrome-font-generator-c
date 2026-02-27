@@ -9,13 +9,9 @@
 
       buildPhase = ''
         set -e
+        export TTF=${../fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf}
 
-        monochrome-font-generator-c \
-          --width 1024 --height 1024 \
-          --file-prefix char_map --name-prefix char_map \
-          ${../fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf}
-
-        "$CC" -c -fsyntax-only char_map.tab.c
+        bash ${./run-tests.sh} ${./test-cases}
       '';
 
       installPhase = ''
