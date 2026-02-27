@@ -9,11 +9,15 @@
     git-hooks-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ flake-parts, ... }: flake-parts.lib.mkFlake { inherit inputs; } {
+  outputs = inputs@{ flake-parts, ... }: flake-parts.lib.mkFlake { inherit inputs; } ({ config, ... }: {
     imports = [
       ./nix/build.nix
       ./testsuites/build.nix
     ];
+
+    flake.overlays.default = self: super: {
+      monochrome-font-generator-c = config.packages.${self.system}.default;
+    };
 
     perSystem = { config, pkgs, ... }: {
 
@@ -44,6 +48,6 @@
 
     systems = [ "x86_64-linux" ];
 
-  };
+  });
 
 }
