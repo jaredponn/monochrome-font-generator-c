@@ -118,16 +118,6 @@ int main(int argc, char *argv[]) {
   /////////////////////////
   // Creating the header
   /////////////////////////
-  // char guard[256];
-  // int gn = snprintf(guard, sizeof(guard), "%s_TAB_H", args.name_prefix);
-  // if (gn < 0 || (size_t)gn >= sizeof(guard)) {
-  //   fprintf(stderr, "Name prefix too long for header guard\n");
-  //   status = 1;
-  //   goto close_source;
-  // }
-  // for (int i = 0; guard[i]; ++i)
-  //   guard[i] = toupper((unsigned char)guard[i]);
-
   fprintf(header_file, "#ifndef %s_TAB_H\n", args.name_prefix);
   fprintf(header_file, "#define %s_TAB_H\n", args.name_prefix);
 
