@@ -19,6 +19,13 @@ The generator uses FreeType 2 to rasterize every glyph in monochrome mode
 The consuming application includes the generated header, iterates over a string,
 and writes each glyph's bitmap onto a canvas using the provided parameters.
 
+## Limitations
+
+- **No kerning data.** The generated tables do not include kerning information
+  (to keep code size smaller), so glyph spacing relies solely on each glyph's
+  `advance_x` value. This works well for monospace fonts but will produce uneven
+  spacing with proportional fonts. For best results, use a monospace typeface.
+
 ## Usage
 
 ```sh
