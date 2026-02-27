@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
   fprintf(header_file, "  int pitch; // pitch is an offset to add to a bitmap "
                        "pointer in order to go down one row.\n");
   fprintf(header_file, "  unsigned char const *buffer;\n");
-  fprintf(header_file, "} %s_slot_t;\n", args.name_prefix);
+  fprintf(header_file, "} %s_glyph_and_metrics_t;\n", args.name_prefix);
   fprintf(header_file, "\n");
 
   fprintf(header_file, "\n");
@@ -168,7 +168,8 @@ int main(int argc, char *argv[]) {
                        "useful information to render the character");
   fprintf(header_file, " * the underlying freetype library with how to use\n");
   fprintf(header_file, " */\n");
-  fprintf(header_file, "extern %s_slot_t const %s_tab[UINT8_MAX + 1];\n",
+  fprintf(header_file,
+          "extern %s_glyph_and_metrics_t const %s_tab[UINT8_MAX + 1];\n",
           args.name_prefix, args.name_prefix);
 
   fprintf(header_file, "#endif /* %s_TAB_H */\n", args.name_prefix);
@@ -203,7 +204,7 @@ int main(int argc, char *argv[]) {
             (int)character);
     for (size_t i = 0; i < buffer_size; ++i) {
       unsigned char byte = ft_slot->bitmap.buffer[i];
-      if (args.leftmost_lsb) {
+      if (args.lsb_leftmost) {
         // Magic trick to reverse the bits in a byte
         // <https://graphics.stanford.edu/~seander/bithacks.html#ReverseByteWith32Bits>
         byte = ((byte * 0x0802LU & 0x22110LU) | (byte * 0x8020LU & 0x88440LU)) *
@@ -219,7 +220,8 @@ int main(int argc, char *argv[]) {
   }
 
   // Then, we create the mapping
-  fprintf(source_file, "%s_slot_t const %s_tab[UINT8_MAX + 1] = {\n",
+  fprintf(source_file,
+          "%s_glyph_and_metrics_t const %s_tab[UINT8_MAX + 1] = {\n",
           args.name_prefix, args.name_prefix);
 
   for (int character = 0; character <= UINT8_MAX; ++character) {
