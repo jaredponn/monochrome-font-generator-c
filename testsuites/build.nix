@@ -2,6 +2,6 @@
 { ... }:
 {
   imports = [
-    ./integration-valid-c/build.nix
+    ./valid-c/build.nix
   ];
 }
