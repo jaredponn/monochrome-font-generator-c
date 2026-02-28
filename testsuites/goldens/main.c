@@ -113,17 +113,14 @@ int main(int argc, char *argv[]) {
     int glyph_y = jet_brains_mono_ascender - slot->bitmap_top + pen_y;
 
     int pitch = slot->pitch;
-
-    if (!(pitch >= 0)) {
-      fprintf(stderr, "unsupported pitch=%d\n", pitch);
-      goto free_canvas;
-    }
+    int abs_pitch = pitch >= 0 ? pitch : -pitch;
 
     for (unsigned int r = 0; r < slot->rows; ++r) {
+      unsigned int buffer_row = pitch >= 0 ? r : (slot->rows - 1 - r);
       for (unsigned int c = 0; c < slot->width; ++c) {
-        int byte_index = r * pitch + c / 8;
+        int byte_index = buffer_row * abs_pitch + c / 8;
         int bit_index = c % 8;
-        int pixel_on = (slot->buffer[byte_index] >> bit_index) & 1;
+        int pixel_on = (slot->buffer[byte_index] >> (7 - bit_index)) & 1;
 
         int cx = glyph_x + (int)c;
         int cy = glyph_y + (int)r;

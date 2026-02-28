@@ -1,4 +1,4 @@
-FONT_TTF ?= ../font-fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf
+TTF ?= ../font-fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf
 
 .PHONY: all check-goldens update-goldens clean
 
@@ -36,7 +36,7 @@ jet_brains_mono.tab.c jet_brains_mono.tab.h:
 		--lsb-leftmost \
 		--advance-x \
 		--file-prefix jet_brains_mono --name-prefix jet_brains_mono \
-		$(FONT_TTF)
+		$(TTF)
 
 clean:
 	rm -f render-to-pbm jet_brains_mono.tab.c jet_brains_mono.tab.h

@@ -8,13 +8,13 @@
       nativeBuildInputs = [ config.packages.default ];
 
       buildPhase = ''
-        set -e
-
+        	set -eu
+                export TTF=${../font-fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf}
+        	make check-goldens
       '';
 
       installPhase = ''
-        mkdir -p "$out"
-        cp output.pbm "$out/"
+        	touch $out
       '';
     };
   };
