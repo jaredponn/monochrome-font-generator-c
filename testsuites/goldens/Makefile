@@ -1,3 +1,14 @@
+# DESCRIPTION
+# ~~~~~~~~~~~
+# The target `render-to-pbm` compiles main.c against the generated font tables
+# into an executable that renders text strings to PBM images.
+#
+# The PHONY target `check-goldens` renders each test fixture in `./fixtures/`
+# and diffs the output against the expected images in `./goldens/`.
+#
+# The PHONY target `update-goldens` renders each test fixture in `./fixtures/`
+# and overwrites the expected images in `./goldens/`.
+
 TTF ?= ../font-fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf
 
 .PHONY: all check-goldens update-goldens clean
@@ -5,30 +16,21 @@ TTF ?= ../font-fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf
 render-to-pbm: main.c jet_brains_mono.tab.c jet_brains_mono.tab.h
 	$(CC) -o $@ $^
 
-# Choosing width/height values in pixels
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Let's say we have a display with dpi=169 dots/in.
-# We want our width and height to be 13 pixels.
-# Recall we have 
-# > pixel_size = point_size * resolution / 72
-# from <https://freetype.org/freetype2/docs/glyphs/glyphs-2.html>, so
-# 
-# ```
-# 13 = point_size * 169 / 72
-#   iff 13 = point_size * 169 / 72
-#   iff point_size = 5.53846153846
-# ```
-# Finally, we recall that the `--width` and `--height` flags are in 1/64s of a
-# point, so this means we must put
-# ```
-# width = height = 5.53846153846 * 64 =  354.461538461
-# ```
-# As a convenient one liner, the formula is given by
-# ```
-# width = height = 64 * pixel_size / (dpi / 72)
-#                = 64 * pixel_size / (169 / 72)
-#                       ^-- we later put this to 20
-# ```
+# Choosing --width/--height values for a target pixel size
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# From <https://freetype.org/freetype2/docs/glyphs/glyphs-2.html>:
+#
+#   pixel_size = point_size * resolution / 72
+#
+# The --width and --height flags are in 1/64ths of a point, so the formula
+# to convert a desired pixel size to the flag value is:
+#
+#   height = width = 64 * pixel_size * 72 / dpi
+#
+# For a 20-pixel glyph height at 169 DPI:
+#
+#   height = width = 64 * 20 * 72 / 169 = 544.97...
+#
 jet_brains_mono.tab.c jet_brains_mono.tab.h:
 	monochrome-font-generator-c \
 		--width 0 --height 545 \
