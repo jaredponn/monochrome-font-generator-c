@@ -1,23 +1,28 @@
 # monochrome-font-generator-c
 
 A command-line tool that converts TrueType (`.ttf`) font files into C source
-code containing bit-packed monochrome glyph bitmaps. The generated `.tab.c` and
-`.tab.h` files provide a lookup table mapping each of the 256 ASCII byte values
-to its rendered glyph data, so you can draw text in embedded or framebuffer
-environments without linking FreeType at runtime.
+code containing bit-packed monochrome glyph bitmaps alongside suitable metrics
+to render text. More precisely, the generated `.tab.c` and `.tab.h` files
+provide a lookup table mapping each of the 256 ASCII byte values to its
+rendered glyph data and metrics to permit drawing text in framebuffer
+environments without including FreeType.
 
-## How it works
+## Getting started
 
-The generator uses FreeType 2 to rasterize every glyph in monochrome mode
-(`FT_LOAD_MONOCHROME`). For each character it emits:
+Execute the following command to generate the `.tab.c` and `.tab.h` files
+containing the monochrome glyph bitmaps and suitable metrics to render text.
 
-- A `static const` byte array holding the bit-packed bitmap.
-- An entry in a `_glyph_and_metrics_t` struct array containing the bitmap metrics
-  (`bitmap_left`, `bitmap_top`, `advance_x`, `advance_y`, `rows`, `width`,
-  `pitch`) and a pointer to the bitmap buffer.
+```sh
+$ monochrome-font-generator-c --width 1024 \
+  --height 1024 \
+  --advance-x \
+  --lsb-leftmost \
+  myfont.ttf
+```
 
-The consuming application includes the generated header, iterates over a string,
-and writes each glyph's bitmap onto a canvas using the provided parameters.
+Then, one can include the `.tab.c` and `.tab.h` files in one's project to render
+text. For example, see [testsuites/goldens/main.c](testsuites/goldens/main.c)
+which demonstrates rendering text to a `.pbm`.
 
 ## Limitations
 
@@ -45,40 +50,24 @@ monochrome-font-generator-c \
 | `--vdpi` | Vertical device resolution in DPI | 72 |
 | `--file-prefix` | Output file path prefix (produces `<prefix>.tab.c` and `<prefix>.tab.h`) | `char_map` |
 | `--name-prefix` | C symbol prefix for generated types and tables | `char_map` |
-| `--lsb-leftmost` | Least significant bit is the leftmost pixel | Disabled, so MSB is leftmost |
+| `--lsb-leftmost` | Least significant bit is the leftmost pixel | Disabled, so MSB is the leftmost pixel |
 | `--invert` | Invert bitmap foreground and background colors | Disabled, so 1 = foreground, 0 = background |
 | `--advance-x` | Include `advance_x` field in the generated struct | Omitted |
 | `--advance-y` | Include `advance_y` field in the generated struct | Omitted |
 
-### Example
-
-```sh
-$ monochrome-font-generator-c --width 1024 --height 1024 --lsb-leftmost --advance-x myfont.ttf
-```
-
-This produces `char_map.tab.h` and `char_map.tab.c`. Include the header in your
-project and link the source to render text using the generated glyph table.
-
-## Building
+## Installing
 
 ### With Nix (recommended)
 
-```sh
-nix build
-```
+The `flake.nix` provides the `default` overlay, which contains the derivation
+for the code generator in the key `monochrome-font-generator-c`.
 
 ### With CMake
 
 Requires CMake >= 3.20 and FreeType 2.
 
 ```sh
-cmake -B build
-cmake --build build
-```
-
-For an optimized release build with `-O3`:
-
-```sh
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
+cmake --install build
 ```
