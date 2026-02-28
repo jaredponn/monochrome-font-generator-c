@@ -1,10 +1,13 @@
-#include "char_map.tab.h"
+#include "jet_brains_mono.tab.h"
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+/**
+ * @brief writes the provided canvas to a pbm file
+ */
 static int write_pbm(const char *path, const uint8_t *pixels, int w, int h) {
   FILE *f = fopen(path, "w");
   if (!f)
@@ -24,6 +27,39 @@ static int write_pbm(const char *path, const uint8_t *pixels, int w, int h) {
 }
 
 /**
+ * @brief Computes the minimum width and height (in pixels) to render the
+ * provided text
+ */
+static int get_text_width_and_height(char const *text, int *out_width,
+                                     int *out_height) {
+  *out_width = 0;
+  *out_height = 0;
+
+  if (text[0] == '\0')
+    return 0;
+
+  int largest_line_length = 0;
+
+  int line_length = 0;
+  int line_count = 0;
+
+  for (const char *c = text; *c; ++c) {
+    if (*c == '\n') {
+      line_length = 0;
+      ++line_count;
+    } else {
+      line_length += jet_brains_mono_tab[*c].advance_x;
+      largest_line_length =
+          largest_line_length > line_length ? largest_line_length : line_length;
+    }
+  }
+
+  *out_width = largest_line_length;
+  *out_height = jet_brains_mono_ascender + jet_brains_mono_height * line_count -
+                jet_brains_mono_descender;
+}
+
+/**
  * Renders a string using the generated monochrome font table and writes a PBM.
  *
  * Usage: ./a.out [text] [output.pbm]
@@ -37,27 +73,12 @@ int main(int argc, char *argv[]) {
   if (argc > 2)
     output = argv[2];
 
-  int pen_x = 0;
-  int max_ascent = 0;
-  int max_descent = 0;
+  printf("Rendering text=`%s`\n", text);
 
-  for (const char *p = text; *p; ++p) {
-    uint8_t ch = (uint8_t)*p;
-    char_map_glyph_and_metrics_t const *slot = &char_map_tab[ch];
+  int canvas_w;
+  int canvas_h;
 
-    int top = slot->bitmap_top;
-    int bottom = (int)slot->rows - top;
-
-    if (top > max_ascent)
-      max_ascent = top;
-    if (bottom > max_descent)
-      max_descent = bottom;
-
-    pen_x += (int)(slot->advance_x >> 6);
-  }
-
-  int canvas_w = pen_x + 2;
-  int canvas_h = max_ascent + max_descent + 2;
+  get_text_width_and_height(text, &canvas_w, &canvas_h);
 
   if (canvas_w <= 0)
     canvas_w = 1;
@@ -71,20 +92,34 @@ int main(int argc, char *argv[]) {
   }
   memset(canvas, 0xFF, canvas_w * canvas_h);
 
-  pen_x = 0;
+  int pen_x = 0;
+  int pen_y = 0;
+
   for (const char *p = text; *p; ++p) {
     uint8_t ch = (uint8_t)*p;
-    char_map_glyph_and_metrics_t const *slot = &char_map_tab[ch];
+    printf("ch=`%c`", ch);
+
+    if (ch == '\n') {
+      pen_x = 0;
+      pen_y += jet_brains_mono_height;
+      continue;
+    }
+    jet_brains_mono_glyph_and_metrics_t const *slot = &jet_brains_mono_tab[ch];
 
     int glyph_x = pen_x + slot->bitmap_left;
-    int glyph_y = max_ascent - slot->bitmap_top;
+    int glyph_y = jet_brains_mono_ascender - slot->bitmap_top + pen_y;
 
-    int abs_pitch = slot->pitch < 0 ? -slot->pitch : slot->pitch;
+    int pitch = slot->pitch;
+
+    if (!(pitch >= 0)) {
+      fprintf(stderr, "unsupported pitch=%d\n", pitch);
+      exit(1);
+    }
 
     for (unsigned int r = 0; r < slot->rows; ++r) {
       for (unsigned int c = 0; c < slot->width; ++c) {
-        int byte_index = r * abs_pitch + c / 8;
-        int bit_index = 7 - (c % 8);
+        int byte_index = r * pitch + c / 8;
+        int bit_index = c % 8;
         int pixel_off = (slot->buffer[byte_index] >> bit_index) & 1;
 
         int cx = glyph_x + (int)c;
@@ -98,10 +133,11 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    pen_x += (int)(slot->advance_x >> 6);
+    pen_x += (int)(slot->advance_x);
   }
 
   int rc = write_pbm(output, canvas, canvas_w, canvas_h);
+
   free(canvas);
 
   if (rc != 0) {
