@@ -1,10 +1,9 @@
-FONT_TTF ?= ../fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf
+FONT_TTF ?= ../font-fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf
 
-.PHONY: all clean
+.PHONY: all check-goldens update-goldens clean
 
 render-to-pbm: main.c jet_brains_mono.tab.c jet_brains_mono.tab.h
 	$(CC) -o $@ $^
-
 
 # Choosing width/height values in pixels
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,3 +40,9 @@ jet_brains_mono.tab.c jet_brains_mono.tab.h:
 
 clean:
 	rm -f render-to-pbm jet_brains_mono.tab.c jet_brains_mono.tab.h
+
+check-goldens: render-to-pbm
+
+update-goldens: render-to-pbm
+	./render-to-pbm "The quick brown fox jumps over the lazy dog" "goldens/expected.pangram.pbm"
+	./render-to-pbm "Hello\nnewline!" "goldens/expected.hello-newline.pbm"

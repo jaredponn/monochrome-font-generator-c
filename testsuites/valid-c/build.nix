@@ -9,7 +9,7 @@
 
       buildPhase = ''
         set -eu
-        export TTF=${../fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf}
+        export TTF=${../font-fixtures/JetBrains_Mono/static/JetBrainsMono-Regular.ttf}
         export TEST_CASES_DIRECTORY=
 
         bash ${./run-tests.sh} ${./test-cases}
