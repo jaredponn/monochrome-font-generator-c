@@ -42,7 +42,22 @@ clean:
 	rm -f render-to-pbm jet_brains_mono.tab.c jet_brains_mono.tab.h
 
 check-goldens: render-to-pbm
+	mkdir -p actuals
+	for TEST_FIXTURE in ./fixtures/*; do \
+		TEST_FIXTURE_NAME="$$(basename "$$TEST_FIXTURE" .txt)"; \
+		./render-to-pbm "$$(cat "$$TEST_FIXTURE")" "actuals/$$TEST_FIXTURE_NAME.pbm"; \
+		diff "actuals/$$TEST_FIXTURE_NAME.pbm" "goldens/$$TEST_FIXTURE_NAME.pbm" \
+			|| { \
+					echo "Expected goldens/$$TEST_FIXTURE_NAME.pbm:"; \
+					cat "goldens/$$TEST_FIXTURE_NAME.pbm"; \
+					echo "to match actuals/$$TEST_FIXTURE_NAME.pbm:"; \
+					cat "actuals/$$TEST_FIXTURE_NAME.pbm"; \
+					exit 1; }; \
+	done
 
 update-goldens: render-to-pbm
-	./render-to-pbm "The quick brown fox jumps over the lazy dog" "goldens/expected.pangram.pbm"
-	./render-to-pbm "Hello\nnewline!" "goldens/expected.hello-newline.pbm"
+	mkdir -p goldens
+	for TEST_FIXTURE in ./fixtures/*; do \
+		TEST_FIXTURE_NAME="$$(basename "$$TEST_FIXTURE" .txt)"; \
+		./render-to-pbm "$$(cat "$$TEST_FIXTURE")" "goldens/$$TEST_FIXTURE_NAME.pbm"; \
+	done

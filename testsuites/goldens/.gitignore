@@ -2,3 +2,4 @@
 *.tab.h
 render-to-pbm
 output.pbm
+actuals
