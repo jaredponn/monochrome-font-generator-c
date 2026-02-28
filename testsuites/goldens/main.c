@@ -112,6 +112,8 @@ int main(int argc, char *argv[]) {
     int glyph_x = pen_x + slot->bitmap_left;
     int glyph_y = jet_brains_mono_ascender - slot->bitmap_top + pen_y;
 
+    // See <https://freetype.org/freetype2/docs/glyphs/glyphs-7.html> for
+    // rendering the pitch
     int pitch = slot->pitch;
     int abs_pitch = pitch >= 0 ? pitch : -pitch;
 
