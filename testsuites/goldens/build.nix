@@ -1,7 +1,7 @@
 { lib, ... }:
 {
   perSystem = { config, pkgs, ... }: {
-    checks.integration-golden = pkgs.stdenv.mkDerivation {
+    checks.golden = pkgs.stdenv.mkDerivation {
       name = "integration-golden";
       src = ./.;
 

@@ -66,6 +66,8 @@ static int get_text_width_and_height(char const *text, int *out_width,
  * Usage: ./a.out [text] [output.pbm]
  */
 int main(int argc, char *argv[]) {
+  int status = 0;
+
   const char *text = "Hello, World!";
   const char *output = "output.pbm";
 
@@ -89,7 +91,8 @@ int main(int argc, char *argv[]) {
   uint8_t *canvas = malloc(canvas_w * canvas_h);
   if (!canvas) {
     fprintf(stderr, "Failed to allocate %dx%d canvas\n", canvas_w, canvas_h);
-    return 1;
+    status = 1;
+    goto out;
   }
   memset(canvas, 0x00, canvas_w * canvas_h);
 
@@ -98,7 +101,6 @@ int main(int argc, char *argv[]) {
 
   for (const char *p = text; *p; ++p) {
     uint8_t ch = (uint8_t)*p;
-    printf("ch=`%c`", ch);
 
     if (ch == '\n') {
       pen_x = 0;
@@ -114,7 +116,7 @@ int main(int argc, char *argv[]) {
 
     if (!(pitch >= 0)) {
       fprintf(stderr, "unsupported pitch=%d\n", pitch);
-      exit(1);
+      goto free_canvas;
     }
 
     for (unsigned int r = 0; r < slot->rows; ++r) {
@@ -137,15 +139,18 @@ int main(int argc, char *argv[]) {
     pen_x += (int)(slot->advance_x);
   }
 
-  int rc = write_pbm(output, canvas, canvas_w, canvas_h);
+  status = write_pbm(output, canvas, canvas_w, canvas_h);
 
-  free(canvas);
-
-  if (rc != 0) {
+  if (status != 0) {
     fprintf(stderr, "Failed to write PBM to %s\n", output);
-    return 1;
+    goto free_canvas;
   }
 
   fprintf(stderr, "Wrote %dx%d PBM to %s\n", canvas_w, canvas_h, output);
-  return 0;
+
+free_canvas:
+  free(canvas);
+
+out:
+  return status;
 }
