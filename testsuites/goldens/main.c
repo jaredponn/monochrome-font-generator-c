@@ -99,6 +99,8 @@ int main(int argc, char *argv[]) {
   int pen_x = 0;
   int pen_y = 0;
 
+  // See <https://freetype.org/freetype2/docs/glyphs/glyphs-5.html> for methods
+  // of rendering text
   for (const char *p = text; *p; ++p) {
     uint8_t ch = (uint8_t)*p;
 
@@ -109,6 +111,9 @@ int main(int argc, char *argv[]) {
     }
     jet_brains_mono_glyph_and_metrics_t const *slot = &jet_brains_mono_tab[ch];
 
+    // It's always good to generally have the pictures
+    // <https://freetype.org/freetype2/docs/glyphs/glyphs-3.html> in mind to
+    // justify where we are setting the glyph_x/y
     int glyph_x = pen_x + slot->bitmap_left;
     int glyph_y = jet_brains_mono_ascender - slot->bitmap_top + pen_y;
 
