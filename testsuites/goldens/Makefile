@@ -28,10 +28,11 @@ render-to-pbm: main.c jet_brains_mono.tab.c jet_brains_mono.tab.h
 # ```
 # width = height = 64 * pixel_size / (dpi / 72)
 #                = 64 * pixel_size / (169 / 72)
+#                       ^-- we later put this to 20
 # ```
 jet_brains_mono.tab.c jet_brains_mono.tab.h:
 	monochrome-font-generator-c \
-		--width 0 --height 490 \
+		--width 0 --height 545 \
 		--hdpi 0 --vdpi 169 \
 		--lsb-leftmost \
 		--advance-x \
@@ -39,4 +40,4 @@ jet_brains_mono.tab.c jet_brains_mono.tab.h:
 		$(FONT_TTF)
 
 clean:
-	rm -f render jet_brains_mono.tab.c jet_brains_mono.tab.h
+	rm -f render-to-pbm jet_brains_mono.tab.c jet_brains_mono.tab.h

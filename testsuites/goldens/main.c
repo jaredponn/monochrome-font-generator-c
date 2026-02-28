@@ -17,7 +17,7 @@ static int write_pbm(const char *path, const uint8_t *pixels, int w, int h) {
 
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
-      fputc(pixels[y * w + x] == 0x00 ? '1' : '0', f);
+      fputc(pixels[y * w + x] ? '1' : '0', f);
       fputc(x + 1 < w ? ' ' : '\n', f);
     }
   }
@@ -60,7 +60,8 @@ static int get_text_width_and_height(char const *text, int *out_width,
 }
 
 /**
- * Renders a string using the generated monochrome font table and writes a PBM.
+ * @brief Renders a string using the generated monochrome font table and writes
+ * a PBM.
  *
  * Usage: ./a.out [text] [output.pbm]
  */
@@ -90,7 +91,7 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Failed to allocate %dx%d canvas\n", canvas_w, canvas_h);
     return 1;
   }
-  memset(canvas, 0xFF, canvas_w * canvas_h);
+  memset(canvas, 0x00, canvas_w * canvas_h);
 
   int pen_x = 0;
   int pen_y = 0;
@@ -120,14 +121,14 @@ int main(int argc, char *argv[]) {
       for (unsigned int c = 0; c < slot->width; ++c) {
         int byte_index = r * pitch + c / 8;
         int bit_index = c % 8;
-        int pixel_off = (slot->buffer[byte_index] >> bit_index) & 1;
+        int pixel_on = (slot->buffer[byte_index] >> bit_index) & 1;
 
         int cx = glyph_x + (int)c;
         int cy = glyph_y + (int)r;
 
         if (cx >= 0 && cx < canvas_w && cy >= 0 && cy < canvas_h) {
-          if (pixel_off) {
-            canvas[cy * canvas_w + cx] = 0x00;
+          if (pixel_on) {
+            canvas[cy * canvas_w + cx] = true;
           }
         }
       }
