@@ -217,16 +217,16 @@ int main(int argc, char *argv[]) {
   fprintf(source_file, "\n");
 
   // Write the global metrics
-  fprintf(header_file, "long int const %s_height = %ld;\n", args.name_prefix,
+  fprintf(source_file, "long int const %s_height = %ld;\n", args.name_prefix,
           ft_face->size->metrics.height / 64);
 
-  fprintf(header_file, "long int const %s_ascender = %ld;\n", args.name_prefix,
+  fprintf(source_file, "long int const %s_ascender = %ld;\n", args.name_prefix,
           ft_face->size->metrics.ascender / 64);
 
-  fprintf(header_file, "long int const %s_descender = %ld;\n", args.name_prefix,
+  fprintf(source_file, "long int const %s_descender = %ld;\n", args.name_prefix,
           ft_face->size->metrics.descender / 64);
 
-  fprintf(header_file, "long int const %s_max_advance = %ld;\n",
+  fprintf(source_file, "long int const %s_max_advance = %ld;\n",
           args.name_prefix, ft_face->size->metrics.max_advance / 64);
   fprintf(source_file, "\n");
 
