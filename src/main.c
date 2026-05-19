@@ -83,17 +83,17 @@ int main(int argc, char *argv[]) {
   char header_path[512];
   char source_path[512];
 
-  status =
+  int path_len =
       snprintf(header_path, sizeof(header_path), "%s.tab.h", args.file_prefix);
-  if (status < 0 || (size_t)status >= sizeof(header_path)) {
+  if (path_len < 0 || (size_t)path_len >= sizeof(header_path)) {
     fprintf(stderr, "File prefix too long for header path\n");
     status = 1;
     goto ft_done_face;
   }
 
-  status =
+  path_len =
       snprintf(source_path, sizeof(source_path), "%s.tab.c", args.file_prefix);
-  if (status < 0 || (size_t)status >= sizeof(source_path)) {
+  if (path_len < 0 || (size_t)path_len >= sizeof(source_path)) {
     fprintf(stderr, "File prefix too long for source path\n");
     status = 1;
     goto ft_done_face;
@@ -322,5 +322,5 @@ ft_done_face:
 ft_done_freetype:
   FT_Done_FreeType(ft_library);
 out:
-  return 0;
+  return status;
 }
